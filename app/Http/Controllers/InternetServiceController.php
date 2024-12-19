@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\InternetService;
 use Illuminate\Http\Request;
-use Mpdf\Mpdf;  
+use Illuminate\Support\Facades\Auth;
+use Mpdf\Mpdf;
 
 class InternetServiceController extends Controller
 {
@@ -21,7 +22,27 @@ class InternetServiceController extends Controller
 
     public function store(Request $request)
     {
-        InternetService::create($request->all());
+        $validatedData = $request->validate([
+            'nama_instansi' => 'required|string|max:255',
+            'nama_pic' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+            'no_hp' => 'required|string|max:20',
+            'nama_kegiatan' => 'required|string|max:255',
+            'bandwidth' => 'required|integer',
+            'jadwal_tgl' => 'required|date',
+            'jadwal_jam_mulai' => 'required|time',
+            'jadwal_jam_selesai' => 'required|time',
+            'petugas_1_nama' => 'required|string|max:255',
+            'petugas_1_ttd' => 'required|string|max:255',
+            'petugas_2_nama' => 'required|string|max:255',
+            'petugas_2_ttd' => 'required|string|max:255',
+        ]);
+
+        $validatedData['user_id'] = Auth::id(); // Menambahkan user_id sebelum menyimpan
+
+        InternetService::create($validatedData);
+
         return redirect()->route('internet_services.index')->with('success', 'Internet Service created successfully.');
     }
 
@@ -37,7 +58,27 @@ class InternetServiceController extends Controller
 
     public function update(Request $request, InternetService $internet_service)
     {
-        $internet_service->update($request->all());
+        $validatedData = $request->validate([
+            'nama_instansi' => 'required|string|max:255',
+            'nama_pic' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+            'no_hp' => 'required|string|max:20',
+            'nama_kegiatan' => 'required|string|max:255',
+            'bandwidth' => 'required|integer',
+            'jadwal_tgl' => 'required|date',
+            'jadwal_jam_mulai' => 'required|time',
+            'jadwal_jam_selesai' => 'required|time',
+            'petugas_1_nama' => 'required|string|max:255',
+            'petugas_1_ttd' => 'required|string|max:255',
+            'petugas_2_nama' => 'required|string|max:255',
+            'petugas_2_ttd' => 'required|string|max:255',
+        ]);
+
+        $validatedData['user_id'] = Auth::id(); // Menambahkan user_id sebelum memperbarui
+
+        $internet_service->update($validatedData);
+
         return redirect()->route('internet_services.index')->with('success', 'Internet Service updated successfully.');
     }
 
@@ -55,6 +96,6 @@ class InternetServiceController extends Controller
         $mpdf->WriteHTML($html);
         return $mpdf->Output('InternetService.pdf', 'I');
     }
-
 }
+
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Perbaikan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Mpdf\Mpdf;
 
 class PerbaikanController extends Controller
@@ -21,7 +22,28 @@ class PerbaikanController extends Controller
 
     public function store(Request $request)
     {
-        Perbaikan::create($request->all());
+        $validatedData = $request->validate([
+            'nama_instansi' => 'required|string|max:255',
+            'alamat_pic' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+            'no_hp' => 'required|string|max:20',
+            'tipe' => 'required|string|max:255',
+            'id_pelapor' => 'required|string|max:255',
+            'sumber_internet' => 'required|boolean',
+            'switch_internal' => 'required|boolean',
+            'perangkat_alat' => 'required|string|max:255',
+            'keterangan_kondisi' => 'required|string|max:255',
+            'keterangan_perbaikan' => 'required|string|max:255',
+            'petugas_nama' => 'required|string|max:255',
+            'petugas_tanda_tangan' => 'required|string|max:255',
+            'download_speed' => 'required|numeric',
+            'upload_speed' => 'required|numeric',
+        ]);
+
+        $validatedData['user_id'] = Auth::id(); // Menambahkan user_id sebelum menyimpan
+
+        Perbaikan::create($validatedData);
+
         return redirect()->route('perbaikans.index')->with('success', 'Perbaikan created successfully.');
     }
 
@@ -37,7 +59,28 @@ class PerbaikanController extends Controller
 
     public function update(Request $request, Perbaikan $perbaikan)
     {
-        $perbaikan->update($request->all());
+        $validatedData = $request->validate([
+            'nama_instansi' => 'required|string|max:255',
+            'alamat_pic' => 'required|string|max:255',
+            'tanggal' => 'required|date',
+            'no_hp' => 'required|string|max:20',
+            'tipe' => 'required|string|max:255',
+            'id_pelapor' => 'required|string|max:255',
+            'sumber_internet' => 'required|boolean',
+            'switch_internal' => 'required|boolean',
+            'perangkat_alat' => 'required|string|max:255',
+            'keterangan_kondisi' => 'required|string|max:255',
+            'keterangan_perbaikan' => 'required|string|max:255',
+            'petugas_nama' => 'required|string|max:255',
+            'petugas_tanda_tangan' => 'required|string|max:255',
+            'download_speed' => 'required|numeric',
+            'upload_speed' => 'required|numeric',
+        ]);
+
+        $validatedData['user_id'] = Auth::id(); // Menambahkan user_id sebelum memperbarui
+
+        $perbaikan->update($validatedData);
+
         return redirect()->route('perbaikans.index')->with('success', 'Perbaikan updated successfully.');
     }
 
@@ -47,7 +90,6 @@ class PerbaikanController extends Controller
         return redirect()->route('perbaikans.index')->with('success', 'Perbaikan deleted successfully.');
     }
 
-
     public function generatePDF($id)
     {
         $perbaikan = Perbaikan::findOrFail($id);
@@ -56,6 +98,5 @@ class PerbaikanController extends Controller
         $mpdf->WriteHTML($html);
         return $mpdf->Output('Perbaikan.pdf', 'I');
     }
-
-
 }
+

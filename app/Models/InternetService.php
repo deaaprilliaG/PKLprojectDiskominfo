@@ -10,6 +10,7 @@ class InternetService extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'nama_instansi', 
         'nama_pic', 
         'jabatan', 

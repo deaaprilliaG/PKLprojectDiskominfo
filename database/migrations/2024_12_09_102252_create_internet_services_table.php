@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('internet_services', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('nama_instansi');
             $table->string('nama_pic');
             $table->string('jabatan');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ZoomMeeting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Mpdf\Mpdf;
 
 class ZoomMeetingController extends Controller
@@ -21,7 +22,23 @@ class ZoomMeetingController extends Controller
 
     public function store(Request $request)
     {
-        ZoomMeeting::create($request->all());
+        $validatedData = $request->validate([
+            'nama_instansi' => 'required|string|max:255',
+            'nama_pic' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'nama_topic_meet' => 'required|string|max:255',
+            'jumlah_participant' => 'required|integer',
+            'jadwal_tgl' => 'required|date',
+            'jadwal_jam_mulai' => 'required|time',
+            'jadwal_jam_selesai' => 'required|time',
+            'nama_petugas_1' => 'required|string|max:255',
+            'nama_petugas_2' => 'required|string|max:255',
+        ]);
+
+        $validatedData['user_id'] = Auth::id(); // Menambahkan user_id sebelum menyimpan
+
+        ZoomMeeting::create($validatedData);
+
         return redirect()->route('zoom_meetings.index')->with('success', 'Zoom Meeting created successfully.');
     }
 
@@ -37,7 +54,23 @@ class ZoomMeetingController extends Controller
 
     public function update(Request $request, ZoomMeeting $zoom_meeting)
     {
-        $zoom_meeting->update($request->all());
+        $validatedData = $request->validate([
+            'nama_instansi' => 'required|string|max:255',
+            'nama_pic' => 'required|string|max:255',
+            'jabatan' => 'required|string|max:255',
+            'nama_topic_meet' => 'required|string|max:255',
+            'jumlah_participant' => 'required|integer',
+            'jadwal_tgl' => 'required|date',
+            'jadwal_jam_mulai' => 'required|time',
+            'jadwal_jam_selesai' => 'required|time',
+            'nama_petugas_1' => 'required|string|max:255',
+            'nama_petugas_2' => 'required|string|max:255',
+        ]);
+
+        $validatedData['user_id'] = Auth::id(); // Menambahkan user_id sebelum memperbarui
+
+        $zoom_meeting->update($validatedData);
+
         return redirect()->route('zoom_meetings.index')->with('success', 'Zoom Meeting updated successfully.');
     }
 
@@ -55,6 +88,5 @@ class ZoomMeetingController extends Controller
         $mpdf->WriteHTML($html);
         return $mpdf->Output('ZoomMeeting.pdf', 'I');
     }
-
 }
 
